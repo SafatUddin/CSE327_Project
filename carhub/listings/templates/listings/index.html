@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CarHub - Find Your Perfect Car</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .car-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            transition: transform 0.2s;
+        }
+        .car-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .car-img {
+            height: 200px;
+            object-fit: cover;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+            background-color: #eee;
+        }
+        .price-tag {
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: #2c3e50;
+        }
+    </style>
+</head>
+<body class="bg-light">
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#">CarHub</a>
+            
+            <div class="navbar-nav ms-auto align-items-center">
+                <a class="nav-link active me-3" href="#">Browse Cars</a>
+                
+                <!-- User Info -->
+                <span class="navbar-text text-warning me-3">
+                    Logged in as: <strong>{{ user.username }}</strong>
+                </span>
+
+                <!-- LOGOUT BUTTON -->
+                <form action="{% url 'logout' %}" method="post" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger btn-sm">Logout</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <div class="container my-5">
+        
+        <!-- HEADER -->
+        <div class="mb-5">
+            <h1 class="fw-bold text-primary">Find Your Perfect Car</h1>
+            <p class="text-muted">Browse thousands of new and used cars.</p>
+        </div>
+
+        <!-- CAR GRID -->
+        <h3 class="mb-3 text-secondary">Available Cars ({{ cars|length }})</h3>
+        
+        <div class="row">
+            {% for car in cars %}
+            <div class="col-md-4 mb-4">
+                <div class="card car-card h-100">
+                    <!-- IMAGE -->
+                    {% if car.main_photo %}
+                        <img src="{{ car.main_photo.url }}" class="car-img card-img-top" alt="{{ car.title }}">
+                    {% else %}
+                        <div class="car-img d-flex align-items-center justify-content-center text-muted">
+                            No Image
+                        </div>
+                    {% endif %}
+
+                    <!-- CARD BODY -->
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold">[{{ car.year }} {{ car.title }}]</h5>
+                        
+                        <div class="row text-muted small mb-3">
+                            <div class="col-6">Year: {{ car.year }}</div>
+                            <div class="col-6">Trans: {{ car.transmission }}</div>
+                            <div class="col-6">Miles: {{ car.mileage }}</div>
+                            <div class="col-6">Fuel: {{ car.fuel_type }}</div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <small class="text-muted">Seller: {{ car.seller.username }}</small>
+                            <span class="price-tag">৳{{ car.price }}</span>
+                        </div>
+                        
+                        <a href="#" class="btn btn-outline-primary w-100 mt-3">View Details</a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+                <div class="col-12">
+                    <div class="alert alert-warning">
+                        No cars found. Go to <a href="/admin">Admin Panel</a> to add some!
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+    </div>
+
+</body>
+</html>
